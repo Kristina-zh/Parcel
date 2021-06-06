@@ -1,67 +1,28 @@
 import './index.html';
-import countryTpl from "./templates/countries.hbs"
-import countryListTpl from "./templates/countriesList.hbs"
+import updateMarkup from "./partials/js/update-markup"
+import { alert, defaultModules } from '@pnotify/core';
+import * as PNotifyMobile from '@pnotify/mobile';
 
 const refs = {
   input: document.getElementById('country'),
   countryContainer: document.querySelector('.js-countryDiv'),
-  countryList: document.querySelector('.js-countryList'),
-  countryName: document.querySelector('.js-name')
+  countryList: document.querySelector('.js-countryList')
 }
 
-// const options = {
-//   method: "GET", 
-//   headers: {
+function fetchCountries(name) {
+  const url = `https://restcountries.eu/rest/v2/name/${name}`;
 
-//   }
-// }  
-
-
-refs.input.addEventListener('input', showCountry)
-refs.input.addEventListener('input', removeCountry)
-
-refs.input.addEventListener('input', showList)
-
-function showList() {
-  let name = refs.input.value
-
-  fetch(`https://restcountries.eu/rest/v2/name/${name}`)
+  return fetch(url)
     .then(res => res.json())
-    .then(data => {
-      const markup = countryListTpl(data)
-      refs.countryList.remove()
-      refs.countryList.insertAdjacentHTML('beforeend', markup)
-    })
+    .then(data => updateMarkup(data))
     .catch(error => console.log(error))
 }
 
-function showCountry() {
-  let name = refs.input.value
-
-  fetch(`https://restcountries.eu/rest/v2/name/${name}`)
-    .then(res => res.json())
-    .then(data => {
-
-      const markup = countryTpl(data)
-      if (data.length === 1) {
-        refs.countryContainer.insertAdjacentHTML('beforeend', markup)
-      }
-    })
-    .catch(error => console.log(error))
-}
-
-// function removeCountry() {
-
-//   fetch(`https://restcountries.eu/rest/v2/name/${name}`)
-//     .then(res => res.json())
-//     .then(data => {
-
-//       if (data.length > 1) {
-//         refs.countryContainer.remove()
-//       }
-//     })
-//     .catch(error => console.log(error))
-// }
-
-
-
+refs.input.addEventListener('input', () => {
+  const name = refs.input.value
+  if (name) {
+    refs.countryList.innerHTML = "";
+    refs.countryContainer.innerHTML = "";
+    fetchCountries(name)
+  }
+})
