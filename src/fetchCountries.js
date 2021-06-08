@@ -1,7 +1,7 @@
 import './index.html';
-import updateMarkup from "./partials/js/update-markup"
-import { alert, defaultModules } from '@pnotify/core';
-import * as PNotifyMobile from '@pnotify/mobile';
+import updateMarkup from "./partials/js/update-markup";
+
+const _ = require('lodash');
 
 const refs = {
   input: document.getElementById('country'),
@@ -18,11 +18,9 @@ function fetchCountries(name) {
     .catch(error => console.log(error))
 }
 
-refs.input.addEventListener('input', () => {
+refs.input.addEventListener('input', _.debounce(() => {
   const name = refs.input.value
   if (name) {
-    refs.countryList.innerHTML = "";
-    refs.countryContainer.innerHTML = "";
     fetchCountries(name)
   }
-})
+}, 500))

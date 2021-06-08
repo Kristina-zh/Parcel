@@ -1,2 +1,3 @@
 import './sass/main.scss';
-import './fetchCountries'
+import './fetchCountries';
+import './getPosts'
